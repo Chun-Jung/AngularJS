@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="Content/bootstrap.min.css">
+	<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<title>AngularJS Web - ngSwitch</title>
+	
+</head>
+<body>
+	<div class="container" ng-app="myApp" ng-controller="MainController as ctrl">
+		<div class="row">
+			<select ng-model="ctrl.selection" ng-options="item.name for item in ctrl.people"></select>
+			<code>selection = {{ctrl.selection.name}}</code>
+		</div>
+		<hr>
+		<div class="row">
+			<select ng-model="selectedItem" ng-options="item for item in ['Table', 'List']"></select>
+		</div>
+		<div class="row">
+			<div ng-switch on="selectedItem">
+				<div ng-switch-when="Table">
+					<table class="table table-bordered">
+						<tr>
+							<th>#</th>
+							<th>Name</th>
+							<th>Age</th>
+						</tr>
+						<tr ng-repeat="person in ctrl.people">
+							<td>{{$index+1}}</td>
+							<td>{{person.name}}</td>
+							<td>{{person.age}}</td>
+						</tr>
+					</table>
+				</div>
+				<div ng-switch-when="List">
+					<ul class="list-group">
+						<li ng-repeat="person in ctrl.people" class="list-group-item">{{person.name}}, {{person.age}}</li>
+					<ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="Scripts/angular.min.js"></script>
+	<script>
+		angular.module('myApp',[]);
+		angular.module('myApp')
+			.controller('MainController', function(){
+				var vm = this;
+				vm.people = [
+					{name:"Jack", age:22}, {name:"Mary", age:27},
+					{name:"Tom", age:25}, {name:"Tracy", age:31},
+					{name:"Jimmy", age:29}
+				];
+				vm.selection = vm.people[0];
+			});
+	</script>
+</body>
+</html>

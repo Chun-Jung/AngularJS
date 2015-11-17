@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="Content/bootstrap.min.css">
+	<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<title>AngularJS Web - Filter</title>
+	<style>
+		.sortorder:after{
+			content: '\25b2';
+		}
+		.sortorder.reverse:after{
+			content: '\25bc';
+		}
+	</style>
+</head>
+<body>
+	<div class="container" ng-app="myApp" ng-controller="MainController as ctrl">
+		<!-- (string) filter -->
+		<div class="row">
+			search text : <input type="text" ng-model="ctrl.searchText" />
+			<table class="table table-bordered table-hover">
+				<tr>
+					<th>Name</th>
+					<th>Age</th>
+				<tr>
+				<tr ng-repeat="person in ctrl.people | filter:ctrl.searchText as results">
+					<td>{{person.name}}</td>
+					<td>{{person.age}}</td>
+				</tr>
+			</table>
+		</div>
+		<hr>
+		
+		<!-- number filter -->
+		<div class="row">
+			number : <input type="text" ng-model="ctrl.price" />
+			fractionSize : <input type="number" ng-model="ctrl.size" min="0" max="10" step="1" />
+			<p>{{ctrl.price}}</p>
+			<p>{{ctrl.price | number}}</p>
+			<p>{{ctrl.price | number:ctrl.size}}</p>
+		</div>
+		
+		<!-- currency filter -->
+		<div class="row">
+			<p>{{ctrl.price | currency}}</p>
+			<p>{{ctrl.price | currency:"NT$"}}</p>
+			<p>{{ctrl.price | currency:"NT$":ctrl.size}}</p>
+		</div>
+		<hr>
+		
+		<!-- date filter -->
+		<div class="row">
+			date : <input type="date" ng-model="ctrl.date" />
+			formate : <input type="text" ng-model="ctrl.dateFormate" />
+			timezone : <input type="text" ng-model="ctrl.timezone" />
+			<p>{{ctrl.date}}</p>
+			<p>{{ctrl.date | date}}</p>
+			<p>{{ctrl.date | date:ctrl.dateFormate}}</p>
+			<p>{{ctrl.date | date:ctrl.dateFormate:ctrl.timezone}}</p>
+		</div>
+		<hr>
+		
+		<!-- json filter -->\
+		<div class="row">
+			<pre>{{ {'name':'value'} | json}}</pre>
+			<pre>{{ {'name':'value'} | json:24}}</pre>
+		</div>
+		<hr>
+		
+		<!-- limitTo filter -->
+		<div class="row">
+			<label>
+				Limit {{ctrl.numbers}} to: 
+				<input type="number" step="1" ng-model="ctrl.numLimit" />
+			</label>
+			<p>Output numbers: {{ctrl.numbers | limitTo:ctrl.numLimit}}</p>
+			<p>Output numbers begin 3: {{ctrl.numbers | limitTo:ctrl.numLimit:3}}</p>
+			
+			<label>
+				Limit {{ctrl.letters}} to:
+				<input type="number" step="1" ng-model="ctrl.letterLimit" />
+			</label>
+			<p>Output letters: {{ctrl.letters | limitTo:ctrl.letterLimit}}</p>
+			<p>Output letters begin 3: {{ctrl.letters | limitTo:ctrl.letterLimit:3}}</p>
+			
+			<label>
+				Limit {{ctrl.longNumber}} to:
+				<input type="number" step="1" ng-model="ctrl.longNumberLimit" />
+			</label>
+			<p>Output longNumber: {{ctrl.longNumber | limitTo:ctrl.longNumberLimit}}</p>
+			<p>Output longNumber begin 3: {{ctrl.longNumber | limitTo:ctrl.longNumberLimit:3}}</p>
+		</div>
+		<hr>
+		
+		<!-- orderBy filter -->
+		<label>order by '-age'</label>
+		<div class="row">
+			<table class="table table-border table-hover">
+				<tr>
+					<th>Name</th>
+					<th>Age</th>
+				<tr>
+				<tr ng-repeat="person in ctrl.people | orderBy:'-age'">
+					<td>{{person.name}}</td>
+					<td>{{person.age}}</td>
+				</tr>
+			</table>
+		</div>
+		<label>order by predicate:reverse</label>
+		<br>
+		[ <a href="" ng-click="ctrl.predicate=''">unsorted</a> ]
+		<div class="row">
+			<table class="table table-border table-hover">
+				<tr>
+					<th>
+						<a href="" ng-click="ctrl.order('name')">Name</a>
+						<span class="sortorder" ng-show="ctrl.predicate === 'name'" ng-class="{reverse:ctrl.reverse}"></span>
+					</th>
+					<th>
+						<a href="" ng-click="ctrl.order('age')">Age</a>
+						<span class="sortorder" ng-show="ctrl.predicate === 'age'" ng-class="{reverse:ctrl.reverse}"></span>
+					</th>
+				</tr>
+				<tr ng-repeat="person in ctrl.people | orderBy:ctrl.predicate:ctrl.reverse">
+					<td>{{person.name}}</td>
+					<td>{{person.age}}</td>
+				</tr>
+			</table>
+		</div>
+		<label>order by $filter('orderBy')</label>
+		<div class="row">
+			<table class="table table-border table-hover">
+				<tr>
+					<th>
+						<a href="" ng-click="ctrl.reverse=false;ctrl.order2('name', false)">Name</a>
+						(<a href="" ng-click="ctrl.order2('-name', false)">^</a>)
+					</th>
+					<th>
+						<a href="" ng-click="ctrl.reverse=!ctrl.reverse;ctrl.order2('age', ctrl.reverse)">Age</a>
+					</th>
+				</tr>
+				<tr ng-repeat="person in ctrl.people">
+					<td>{{person.name}}</td>
+					<td>{{person.age}}</td>
+				</tr>
+			</table>
+		</div>
+		<hr>
+		<!-- filter by function -->
+		<label>capitalize</label>
+		<input type="text" ng-model="ctrl.memo"></input>
+		<br>
+		<label>filter limitTo & capitalize</label>
+		<div class="row">
+			<label>{{ctrl.memo | limitTo:10 | capitalize}}</label>
+		<div>
+	</div>
+	<script src="Scripts/angular.min.js"></script>
+	<script>
+		angular.module('myApp',[]);
+		angular.module('myApp')
+			.filter('capitalize',function(){
+				return function(input){
+					return input.charAt(0).toUpperCase() + input.slice(1);
+				}
+			})
+			.controller('MainController', ['$filter', function($filter){
+				var orderBy = $filter('orderBy');
+				var vm = this;
+				vm.people = [
+					{name:"Jack", age:22}, {name:"Mary", age:27},
+					{name:"Tom", age:25}, {name:"Tracy", age:31},
+					{name:"Jimmy", age:29}
+				];
+				
+				vm.size = 5;
+				vm.price = 1234.56789;
+				
+				vm.dateFormate = "yyyy/MM/dd";
+				vm.timezone = "-0800";
+				
+				vm.numbers = [1,2,3,4,5,6,7,8,9];
+				vm.letters = "abcdefghi";
+				vm.longNumber = 2345432342;
+				vm.numLimit = 3;
+				vm.letterLimit = 3;
+				vm.longNumberLimit = 3;
+				
+				vm.predicate = "age";
+				vm.reverse = true;
+				vm.order = function(predicate){
+					vm.reverse = (vm.predicate === predicate) ? !vm.reverse : false;
+					vm.predicate = predicate;
+				};
+				
+				vm.order2 = function(predicate, reverse){
+					vm.people = orderBy(vm.people, predicate, reverse);
+				}
+				vm.order2('-age', false);
+				
+				vm.memo = "";
+			}]);
+	</script>
+	
+</body>
+</html>
