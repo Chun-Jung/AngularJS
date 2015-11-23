@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="Content/bootstrap.min.css">
+	<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<title>AngularJS Web - Select(ngOptions)</title>
+	
+</head>
+<body>
+	<div class="container" ng-app="myApp" ng-controller="MainController as ctrl">
+		<div class="row">
+			<ul class="list-unstyled">
+				<li ng-repeat="color in ctrl.colors">
+					Name: <input type="text" ng-model="color.name" />
+					<label>
+						<input type="checkbox" ng-model="color.notAnOption" />
+						Disabled?
+					</label>
+					<button ng-click="ctrl.colors.splice($index, 1)" aria-label="Remove">X</button>
+				</li>
+				<li>
+					<button ng-click="ctrl.colors.push({})">add</button>
+				</li>
+			</ul>
+		</div>
+		<hr>
+		<!-- 大多的情況下用ngRepeat動態產生option可以取代使用ngOptions -->
+		<!-- 而使用ngOptions可以減少快取與增快速度(因為不需要每個option都去建立每個repeat實體，所以不需要建立scope去存這些實體) -->
+		<div class="row">
+			<label>
+				Color (null not allowed): 
+				<select ng-model="ctrl.myColor" ng-options="color.name for color in ctrl.colors"></select>
+			</label><br/>
+			<label>
+				Color (null allowed): 
+				<select ng-model="ctrl.myColor" ng-options="color.name for color in ctrl.colors">
+					<option value="">--- choose color ---</option>
+				</select>
+			</label><br/>
+			<label>
+				Color group by shade: 
+				<select ng-model="ctrl.myColor" ng-options="color.name group by color.shade for color in ctrl.colors"></select>
+			</label><br/>
+			<label>
+				Color group by shade, with some disabled: 
+				<select ng-model="ctrl.myColor" ng-options="color.name group by color.shade disable when color.notAnOption for color in ctrl.colors"></select>
+			</label><br/>
+			<button ng-click="ctrl.myColor={name:'not in list', shade:'other'}">bogus</button>
+		</div>
+		<div class="row">
+			<label>Current selected: {{ {select_color:ctrl.myColor} }}</label>
+			<div class="row" style="border:solid; height:20px" ng-style="{'background-color':ctrl.myColor.name}">
+			</div>
+		</div>
+	</div>
+	
+	<script src="Scripts/angular.min.js"></script>
+	<script>
+		angular.module('myApp', []);
+		angular.module('myApp')
+			.controller('MainController', function(){
+				var vm = this;
+				vm.colors = [
+					{name:'black', shade:'dark'},
+					{name:'white', shade:'light', notAnOption: true},
+					{name:'red', shade:'dark'},
+					{name:'blue', shade:'dark', notAnOption: true},
+					{name:'yellow', shade:'light', notAnOption: false}
+				];
+				vm.myColor = vm.colors[2]; // red
+			});
+	</script>
+</body>
+</html>
